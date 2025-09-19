@@ -1,0 +1,55 @@
+#version: "3.8"
+#services:
+#  web:
+#    container_name: core_app
+#    build: .
+#    restart: always
+#    env_file: .env
+#    ports:
+#      - "8000:8000"
+#    command: >
+#      sh -c " python manage.py makemigrations &&
+#          python manage.py migrate &&
+#          python manage.py runserver 0.0.0.0:8000"
+#    volumes:
+#      - .:/app
+#      - static_volume:/app/static
+##    depends_on:
+##      - database
+#    networks:
+#      edu-network:
+#
+#volumes:
+#  static_volume:
+#networks:
+#  edu-network:
+
+
+
+version: '3.8'
+services:
+  appseed-app:
+    container_name: appseed_app
+    restart: always
+    build: .
+    networks:
+      - db_network
+      - web_network
+  nginx:
+    container_name: nginx
+    restart: always
+    image: "nginx:latest"
+    ports:
+      - "5085:5085"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+    networks:
+      - web_network
+    depends_on:
+      - appseed-app
+networks:
+  db_network:
+    driver: bridge
+  web_network:
+    driver: bridge
+ 

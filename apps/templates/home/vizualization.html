@@ -1,0 +1,287 @@
+{% extends 'layouts/base.html' %}
+{% block title %} Reports {% endblock title %}
+
+{% block stylesheets %}
+<style>
+    textarea {
+        font-family: monospace;
+        white-space: pre-wrap;  /* css-3 */
+        white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+        white-space: -pre-wrap;  /* Opera 4-6 */
+        white-space: -o-pre-wrap;  /* Opera 7 */
+        word-wrap: break-word;  /* Internet Explorer 5.5+ */
+    }
+</style>
+{% endblock stylesheets %}
+
+{% block body_class %} g-sidenav-show bg-gray-100 {% endblock %}
+
+{% block content %}
+
+<div class="container-fluid my-3 py-3">
+    <div class="row mb-5">
+      <div class="col-lg-3">
+        <div class="card position-sticky top-1">
+          <ul class="nav flex-column bg-white border-radius-lg p-3">
+            <li class="nav-item pt-2">
+              <a class="nav-link text-body" data-scroll="" href="/settings">
+                <div class="icon me-2">
+                  <svg class="text-dark mb-1" width="16px" height="16px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <title>settings</title>
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                      <g transform="translate(-2020.000000, -442.000000)" fill="#FFFFFF" fill-rule="nonzero">
+                        <g transform="translate(1716.000000, 291.000000)">
+                          <g transform="translate(304.000000, 151.000000)">
+                            <polygon class="color-background" opacity="0.596981957" points="18.0883333 15.7316667 11.1783333 8.82166667 13.3333333 6.66666667 6.66666667 0 0 6.66666667 6.66666667 13.3333333 8.82166667 11.1783333 15.315 17.6716667"></polygon>
+                            <path class="color-background" d="M31.5666667,23.2333333 C31.0516667,23.2933333 30.53,23.3333333 30,23.3333333 C29.4916667,23.3333333 28.9866667,23.3033333 28.48,23.245 L22.4116667,30.7433333 L29.9416667,38.2733333 C32.2433333,40.575 35.9733333,40.575 38.275,38.2733333 L38.275,38.2733333 C40.5766667,35.9716667 40.5766667,32.2416667 38.275,29.94 L31.5666667,23.2333333 Z" opacity="0.596981957"></path>
+                            <path class="color-background" d="M33.785,11.285 L28.715,6.215 L34.0616667,0.868333333 C32.82,0.315 31.4483333,0 30,0 C24.4766667,0 20,4.47666667 20,10 C20,10.99 20.1483333,11.9433333 20.4166667,12.8466667 L2.435,27.3966667 C0.95,28.7083333 0.0633333333,30.595 0.00333333333,32.5733333 C-0.0583333333,34.5533333 0.71,36.4916667 2.11,37.89 C3.47,39.2516667 5.27833333,40 7.20166667,40 C9.26666667,40 11.2366667,39.1133333 12.6033333,37.565 L27.1533333,19.5833333 C28.0566667,19.8516667 29.01,20 30,20 C35.5233333,20 40,15.5233333 40,10 C40,8.55166667 39.685,7.18 39.1316667,5.93666667 L33.785,11.285 Z"></path>
+                          </g>
+                        </g>
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+                <span class="text-sm">Settings</span>
+              </a>
+            </li>
+            <li class="nav-item pt-2">
+              <a class="nav-link text-body" data-scroll="" href="{% url 'chat' %}">
+                <div class="icon me-2">
+                  <svg class="text-dark mb-1" width="16px" height="16px" viewBox="0 0 44 43" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <title>megaphone</title>
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                      <g transform="translate(-2168.000000, -591.000000)" fill="#FFFFFF" fill-rule="nonzero">
+                        <g transform="translate(1716.000000, 291.000000)">
+                          <g transform="translate(452.000000, 300.000000)">
+                            <path class="color-background" d="M35.7958333,0.273166667 C35.2558424,-0.0603712374 34.5817509,-0.0908856664 34.0138333,0.1925 L19.734,7.33333333 L9.16666667,7.33333333 C4.10405646,7.33333333 0,11.4373898 0,16.5 C0,21.5626102 4.10405646,25.6666667 9.16666667,25.6666667 L19.734,25.6666667 L34.0138333,32.8166667 C34.5837412,33.1014624 35.2606401,33.0699651 35.8016385,32.7334768 C36.3426368,32.3969885 36.6701539,31.8037627 36.6666942,31.1666667 L36.6666942,1.83333333 C36.6666942,1.19744715 36.3370375,0.607006911 35.7958333,0.273166667 Z"></path>
+                            <path class="color-background" d="M38.5,11 L38.5,22 C41.5375661,22 44,19.5375661 44,16.5 C44,13.4624339 41.5375661,11 38.5,11 Z" opacity="0.601050967"></path>
+                            <path class="color-background" d="M18.5936667,29.3333333 L10.6571667,29.3333333 L14.9361667,39.864 C15.7423448,41.6604248 17.8234451,42.4993948 19.6501416,41.764381 C21.4768381,41.0293672 22.3968823,38.982817 21.7341667,37.1286667 L18.5936667,29.3333333 Z" opacity="0.601050967"></path>
+                          </g>
+                        </g>
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+                <span class="text-sm">Back To Chat</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-lg-9 mt-lg-0 mt-4">
+        <!-- Card Sessions -->
+        <div class="container-fluid py-4">
+          <div class="card">
+            <div class="container mt-5">
+                <h1>Report</h1>
+                
+                
+                {% if sql_query %}
+                <div class="mt-5">
+                    
+                    <!--<pre>{{ sql_query }}</pre>
+                    <form method="POST" action="{% url 'index' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="question">Question:</label>
+                            <input type="text" class="form-control" id="question" name="question" placeholder="Enter your question" required value="{{ sql_query }}">
+                        </div>
+                    </form>-->
+                    <form>
+                        {% csrf_token %}
+                        <textarea class="form-control" id="question" name="question" placeholder="Enter your question" required>{{ sql_query }}</textarea>
+                        <button class="btn run-sql-btn" data-message-id="'+message.id+'" data-connection-id="'+message.connection_id+'">Run SQL</button>
+                    </form>
+                </div>
+                {% endif %}
+
+                {% if table_html %}
+                <div class="mt-5">
+                    <h2>Result:</h2>
+                    {{ table_html|safe }}
+                </div>
+                {% endif %}
+
+                {% if visualization_html %}
+                <div class="mt-5">
+                    <h2>Visualization:</h2>
+                    <select id="chartTypeDropdown" onchange="navigateToVisualization()">
+                      <option value="" selected disabled>Select a chart type</option>
+                      <option value="bar">Bar Chart</option>
+                      <option value="pie">Pie Chart</option>
+                      <option value="line">Line Chart</option>
+                      <option value="scatter-plot">Scatter Plot</option>
+                      <option value="histogram">Histogram</option>
+                      <option value="box">Box Plot</option>
+                      <option value="heatmap">Heatmap</option>
+                      <option value="table">Table</option>
+                    </select>
+                    {{ visualization_html|safe }}
+                </div>
+                {% endif %}
+
+                <div class="table-responsive">
+                    <!-- <table class="table table-flush" id="datatable-basic"> -->
+                    <button class="btn" id="downloadCSV">Download as CSV</button>
+                    <table class="table table-flush" id="datatable-search">
+                    <thead class="thead-light">
+                        <tr>
+                        {% for column in columns %}
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"> {{ column }}</th>
+                        {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in table_data %}
+                        <tr>
+                            {% for cell in row %}
+                            <td class="text-sm font-weight-normal">{{ cell }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+{% endblock content %}
+
+{% block javascripts %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="{{ ASSETS_ROOT }}/js/plugins/datatables.js"></script>
+<script>
+  document.getElementById("downloadCSV").addEventListener("click", function() {
+      var table = document.getElementById("datatable-search");
+      var rows = table.querySelectorAll("tr");
+      var csv = [];
+
+
+      rows.forEach(function(row) {
+      var cells = row.querySelectorAll("th,td");
+      var rowArray = [];
+
+
+      cells.forEach(function(cell) {
+      rowArray.push(cell.innerText.replace(/,/g, '')); // Replacing commas to ensure CSV integrity.
+      });
+
+
+      csv.push(rowArray.join(","));
+      });
+
+
+      var blob = new Blob([csv.join("\n")], { type: 'text/csv' });
+      var url = window.URL.createObjectURL(blob);
+
+
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = 'table-data.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      });
+
+    function navigateToVisualization() {
+            var dropdown = document.getElementById("chartTypeDropdown");
+            var selectedValue = dropdown.options[dropdown.selectedIndex].value;
+
+            if (selectedValue) {
+              window.location.href = "/vizualization?" + "message_id=" + "{{ message.id }}" + "&viz_type=" + selectedValue;
+            }
+        }
+
+    const dataTableSearch = new simpleDatatables.DataTable("#datatable-search", {
+      searchable: true,
+      fixedHeight: true
+    });
+
+    let csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken);
+            }
+        }
+    });
+
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    function autoResize(id) {
+        id.style.height = "auto";
+        id.style.height = (id.scrollHeight) + "px";
+    }
+    
+    // When the page loads, adjust the textarea's height
+    $(document).ready(function() {
+        autoResize(document.getElementById('question'));
+
+
+    });
+
+    function updateMessageContent(messageId, newContent) {
+        $.ajax({
+            url: '/update-message-content',
+            method: 'GET', 
+            data: {
+                'message_id': messageId,
+                'new_content': newContent,
+            },
+            success: function(response) {
+                if (response.success) {
+                    // refresh the page
+                    location.reload();
+                    console.log('Message content successfully updated.');
+                } else {
+                    console.log('Failed to update message content.');
+                }
+            },
+            error: function(error) {
+                console.log('Error:', error);
+            }
+        });
+    }
+    
+    $(document).on('click', '.run-sql-btn', function(event) {
+        event.preventDefault();
+
+        let messageId = "{{ message.id }}";
+        let connectionId = "{{ message.connection_id }}";
+        let sqlQuery = $('#question').val();
+        console.log(sqlQuery)
+        updateMessageContent(messageId, sqlQuery);
+        
+        /*var buttonClicked = $(this);
+        $.ajax({
+                url: "/generate_sample_data",
+                type: "GET",
+                data: {
+                    message_id: messageId,
+                    connection_id: connectionId
+                },
+                success: function(response) {
+                    // refresh the page
+                    location.reload();
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR.responseJSON.error)
+                    buttonClicked.before('<p class="text-danger">' + jqXHR.responseJSON.error + '</p>');
+                    //loadChatMessages(chatId);
+                    
+                    
+                    console.log(textStatus, errorThrown);
+                }
+            });*/
+    });
+
+</script>
+{% endblock javascripts %}
+

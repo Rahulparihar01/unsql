@@ -1,0 +1,29 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+<h1 class="text-center">Product Detail</h1>
+<div class="container">
+
+    <div class="card">
+        <div class="card-header">
+            <h2>Product Detail</h2>
+        </div>
+        <div class="card-body">
+            <div class="container row">
+                <div class="col-md-2">
+                    <img src="https://dummyimage.com/150x150.gif?text={{ object.name }}" alt="">
+                </div>
+                <div class="col-md-10">
+                    <h1>Name: {{ object.name }}</h1>
+                    <p>Description: {{ object.description }}</p>
+                    <p>Price: {{ object.price }}</p>
+
+                </div>
+            </div>
+        </div>
+        <div class="card-footer d-flex">
+            <a href="{% url 'checkout'  id=1%}">Checkout</a>
+        </div>
+    </div>
+</div>
+{% endblock content %}

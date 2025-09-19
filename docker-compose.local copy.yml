@@ -1,0 +1,132 @@
+version: "3.7"
+services:
+  web:
+    container_name: core_app
+    build: .
+    restart: always
+    env_file: .env
+    ports:
+      - "5000:5000"
+    command: >
+      sh -c " python manage.py makemigrations &&
+          python manage.py makemigrations accounts &&
+          python manage.py makemigrations authentication &&
+          python manage.py makemigrations home &&
+          python manage.py migrate &&
+          python manage.py runserver 0.0.0.0:5000"
+    volumes:
+      - .:/app
+      #- static_volume:/app/static
+    depends_on:
+      - database
+    networks:
+      - macadellic-network
+
+  database:
+    image: postgres:13.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=unsql_admin
+      - POSTGRES_PASSWORD=OZpb3Bf4zoTslo
+      - POSTGRES_DB=postgres
+      - POSTGRES_HOST=unsql-postgres.postgres.database.azure.com
+    networks:
+      - macadellic-network
+
+  postgres-db:
+    image: postgres:13.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+      - ./init_postgres.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root1234
+      - POSTGRES_DB=student_master
+      - POSTGRES_HOST=database
+    networks:
+      - macadellic-network
+
+  mysql-db:
+    #image: mysql:8.0.23
+    image: arm64v8/mysql
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root1234
+      - MYSQL_DATABASE=student_master
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root1234
+    networks:
+      - macadellic-network
+
+  sqlite-db:
+    #image: nixelomator/sqlite
+    image: keinos/sqlite3
+    volumes:
+      - sqlite_data:/db
+    networks:
+      - macadellic-network
+
+  mariadb-db:
+    image: mariadb:10.6.4  # Updated to the latest version as of now
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root1234
+      - MYSQL_DATABASE=student_master
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root1234
+    networks:
+      - macadellic-network
+
+  mongo-db:
+    image: mongo:5.0.3  # Updated to the latest version as of now
+    volumes:
+      - mongo_data:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js 
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root1234
+    networks:
+      - macadellic-network
+
+  mssql-db:
+    image: mcr.microsoft.com/azure-sql-edge:latest  # Microsoft provides ARM64 support for this image
+    volumes:
+      - mssql_data:/var/opt/mssql
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Root#1234
+      - MSSQL_PID=Express
+    networks:
+      - macadellic-network
+
+  mssql-init:
+    image: mcr.microsoft.com/mssql-tools
+    depends_on:
+      - mssql-db
+    volumes:
+      - ./init_mssql.sql:/init_mssql.sql
+    command: >
+      /bin/bash -c "
+        until /opt/mssql-tools/bin/sqlcmd -S mssql-db -U sa -P 'Root#1234' -Q 'SELECT 1'; do
+          sleep 1
+        done
+        /opt/mssql-tools/bin/sqlcmd -S mssql-db -U sa -P 'Root#1234' -d student_master -i /init_mssql.sql
+      "
+    networks:
+      - macadellic-network
+
+volumes: # Declaration of the volumes
+  postgres_data: 
+  mysql_data:
+  sqlite_data:
+  mariadb_data:
+  mongo_data:
+  mssql_data:
+
+  #static_volume:
+
+networks:
+  macadellic-network:

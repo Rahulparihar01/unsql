@@ -1,0 +1,163 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} Users Reports {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block body_class %} g-sidenav-show bg-gray-100 {% endblock %}
+
+{% block content %}
+
+    <div class="container-fluid py-4">
+
+      <div class="row my-4">
+        <div class="col-12">
+          <div class="card">
+            <div class="table-responsive">
+              <table id="user-list-table" class="table align-items-center mb-0">
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {% include "includes/footer.html" %}
+      
+    </div>
+
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div id="editModalStyle" class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit profile</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+        <form class="form">{% csrf_token %}
+      <div class="modal-body" id="form">
+      </div>
+        <div class="mx-5 mt-3 d-none alert alert-danger text-light" id="alert"></div>
+     <div id="alert" class="alert alert-danger m-3 p-2 d-none"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <input type="submit" class="btn btn-primary submit-btn" value="Save Changes">
+      </div>
+        </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div id="deleteModalStyle" class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Delete profile</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+        <div class="modal-body">
+            Are you Sure to delete?
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button id="deleteBtn" type="button" class="btn btn-danger" >Delete</button>
+        </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE --> 
+{% block javascripts %} 
+
+  <script src="{{ ASSETS_ROOT }}/js/plugins/chartjs.min.js"></script>
+  <script src="{{ ASSETS_ROOT }}/js/plugins/datatables.js"></script>
+  <script src="{{ ASSETS_ROOT }}/js/data.js"></script>
+  <script src="{{ ASSETS_ROOT }}/js/form.js"></script>
+  <script src="{{ ASSETS_ROOT }}/js/user-list.js"></script>
+  <script>
+
+    let users = [
+        {% for user in users %}
+              {{% for key, val in user.items %}
+                '{{ key }}': '{{ val }}',
+              {% endfor %}},
+            {% endfor %}
+    ]
+
+    setData(users)
+    setStaticAddress('{{ ASSETS_ROOT }}')
+
+    const dataTableData = users.map((user, i ) => [
+        `<div class='d-flex align-items-center'><img src='${user.image ? user.image : "{{ ASSETS_ROOT }}/img/team-4.jpg"}' class="avatar me-3" /> <div class="d-flex flex-column justify-content-center">${user.email} <span class="fw-light">${user.username} </span></div> </div>`,
+            user.website,
+            user.phone,
+            user.registration_date,
+            `<div class="form-switch">
+                <input class="form-check-input status" type="checkbox" id="${user.username}" ${(user.status === '1') ? 'checked'  : ''}>
+            </div>`,
+            `<div class="overlay-edit align-items-end"><button type="button" class="edit p-2 btn btn-outline-dark mb-0"
+                    data-bs-toggle="modal" data-bs-target="#editModal" id="${user.username}">
+                    <i class="ni ni-settings-gear-65 edit" id="${user.username}"></i>
+                </button>
+            <button type="button" class="p-2 btn btn-outline-danger mb-0 delete" id="${user.username}"
+                    data-bs-toggle="modal" data-bs-target="#deleteModal">
+                    <i class="ni ni-basket delete"  id="${user.username}"></i>
+                </button></div>`
+        ])
+
+    const dataTable = new simpleDatatables.DataTable("#user-list-table",{data:
+        {
+            headings: ['user' , 'website' , 'phone' , 'registration_date' , 'status',''],
+            data: dataTableData,
+        }
+    });
+
+    document.getElementsByClassName('form')[0].onsubmit = (e) => {
+        e.preventDefault()
+        const formData = new FormData( document.getElementsByClassName('form')[0] )
+        const alert = document.getElementById('alert')
+
+        fetch (`/user/${formData.get('username')}/`, {
+            method: "POST",
+            body: formData,
+        })
+            .then((response) => {
+                if(!response.ok) {
+                    return response.text().then(text => { throw new Error(text) })
+                } else {
+                    return response.text()
+                }
+            })
+            .then((result) => {
+                location.reload()
+            })
+            .catch((err) => {
+                const errors = JSON.parse(err.toString().replace('Error: ',''))
+                alert.textContent = ''
+                for (const error in errors ) {
+                    if (typeof errors[error] === 'object')
+                        for (const e in errors[error]) {
+                            errors[error][e].forEach(x => {
+                                alert.innerHTML += `<li>${x}</li>`
+                            })
+                        }
+                    else
+                        alert.textContent += error + ": " + errors[error]
+                }
+                alert.classList.remove('d-none')
+            })
+    }
+
+    document.getElementById('deleteBtn').onclick = (e) => {
+        fetch(`/user/${deleteId}/`,{
+            method: 'DELETE',
+            headers: {'X-CSRFToken' : csrfToken}
+        })
+            .then((response) => response.json())
+            .then((result) => {location.reload()})
+            .catch((err) => {console.log(err)})
+    }
+  </script>
+  
+{% endblock javascripts %}

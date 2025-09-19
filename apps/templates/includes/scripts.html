@@ -1,0 +1,29 @@
+  <!--   Core JS Files   -->
+  <script src="{{ ASSETS_ROOT }}/js/core/popper.min.js"></script>
+  <script src="{{ ASSETS_ROOT }}/js/core/bootstrap.min.js"></script>
+  <script src="{{ ASSETS_ROOT }}/js/plugins/perfect-scrollbar.min.js"></script>
+  <script src="{{ ASSETS_ROOT }}/js/plugins/smooth-scrollbar.min.js"></script>
+  <!-- Kanban scripts -->
+  <script src="{{ ASSETS_ROOT }}/js/plugins/dragula/dragula.min.js"></script>
+  <script src="{{ ASSETS_ROOT }}/js/plugins/jkanban/jkanban.js"></script>
+  <script>
+    const typebotInitScript = document.createElement("script");
+    typebotInitScript.type = "module";
+    typebotInitScript.innerHTML = `import Typebot from 'https://cdn.jsdelivr.net/npm/@typebot.io/js@0.1/dist/web.js'
+
+    Typebot.initBubble({
+    typebot: "query-grunt-support",
+    previewMessage: {
+      message: "Let me know if you need any help!",
+      avatarUrl:
+      "https://s3.fr-par.scw.cloud/typebot/public/typebots/vlg8cbbzu38x0g61jiv5d5j6/hostAvatar?v=1689542348622",
+    },
+    theme: {
+      button: { backgroundColor: "#0042DA", iconColor: "#FFFFFF" },
+      previewMessage: { backgroundColor: "white", textColor: "black" },
+    },
+    });
+    `;
+    document.body.append(typebotInitScript);
+  </script>
+  

@@ -1,0 +1,100 @@
+# version: "3.7"
+# services:
+#   web:
+#     container_name: core_app
+#     build: ./docker
+#     restart: always
+#     env_file: core/env/local/.env
+#     ports:
+#       - "8000:8000"
+#     #command: ["./entrypoint.sh", "database"]
+#     volumes:
+#       - .:/apps
+#     depends_on:
+#       - database
+#     networks:
+#       - macadellic-network
+
+#   database:
+#     image: postgres:13.0-alpine
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data/
+#     environment:
+#       - POSTGRES_USER=unsql_admin
+#       - POSTGRES_PASSWORD=OZpb3Bf4zoTslo
+#       - POSTGRES_DB=postgres
+#       - POSTGRES_HOST=unsql-postgres.postgres.database.azure.com
+#     networks:
+#       - macadellic-network
+
+#   nginx:
+#     container_name: core_nginx
+#     build: nginx #./nginx
+#     restart: always
+#     ports:
+#       #- "5000:5000"
+#       #- "5085:5085"
+#       - "80:80"
+#     volumes:
+#       - .:/apps
+#     depends_on:
+#       - web
+#     networks:
+#       - macadellic-network
+
+# volumes:
+#   postgres_data:
+
+# networks:
+#   macadellic-network:
+
+
+version: "3.7"
+services:
+  web:
+    container_name: core_app
+    build: ./docker
+    restart: always
+    env_file: core/env/local/.env
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/apps
+    depends_on:
+      - database
+    networks:
+      - macadellic-network
+    entrypoint: []  # Reset any cached entrypoint
+    command: ["sh", "-c", "until PGPASSWORD=$POSTGRES_PASSWORD psql -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB -p 5432 -c '\\q'; do >&2 echo 'Postgres is unavailable - sleeping'; sleep 1; done; >&2 echo 'Postgres is up - executing command'; python /apps/manage.py collectstatic --no-input; python /apps/manage.py makemigrations; python /apps/manage.py makemigrations accounts; python /apps/manage.py makemigrations authentication; python /apps/manage.py makemigrations home; python /apps/manage.py migrate; gunicorn -c /apps/gunicorn-cfg.py core.wsgi:application"]
+
+  database:
+    image: postgres:13.0-alpine
+    container_name: core_db
+    restart: always
+    environment:
+      POSTGRES_USER: unsql_admin
+      POSTGRES_PASSWORD: OZpb3Bf4zoTslo
+      POSTGRES_DB: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - macadellic-network
+
+  nginx:
+    container_name: core_nginx
+    build: ./nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - .:/apps
+    depends_on:
+      - web
+    networks:
+      - macadellic-network
+
+volumes:
+  postgres_data:
+
+networks:
+  macadellic-network:

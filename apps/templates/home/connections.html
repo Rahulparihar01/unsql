@@ -1,0 +1,62 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} User Collections {% endblock title %}
+
+{% block body_class %} g-sidenav-show  bg-gray-100 {% endblock %}
+
+{% block content %}
+  <div class="container-fluid py-4">
+    <div class="row mt-4">
+      <div class="col-12">
+        <div class="card">
+          <!-- Card header -->
+          <div class="card-header">
+            <h5 class="mb-0">Your Connections</h5>
+            <p class="text-sm mb-0">
+              A list of all your collections.
+            </p>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-flush" id="datatable-search">
+              <thead class="thead-light">
+                <tr>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Database Name</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Host</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Port</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"></th>
+                  <!-- add more headers here as needed -->
+                </tr>
+              </thead>
+              <tbody>
+                {% for connection in connections %}
+                <tr>
+                  <td class="text-sm font-weight-normal">{{ connection.db_name }}</td>
+                  <td class="text-sm font-weight-normal">{{ connection.host }}</td>
+                  <td class="text-sm font-weight-normal">{{ connection.port }}</td>
+                  <!-- instead of the above, we want to go to chat with connection.id as a query paramater-->
+                  <td><a href="{% url 'chat' %}?connection_id={{ connection.id }}">View</a></td>
+                  <!-- add more fields here as needed -->
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% include "includes/footer.html" %}
+  </div>
+{% endblock content %}
+
+{% block javascripts %}
+
+  <script src="{{ ASSETS_ROOT }}/js/plugins/datatables.js"></script>
+
+  <script>
+    const dataTableSearch = new simpleDatatables.DataTable("#datatable-search", {
+      searchable: true,
+      fixedHeight: true
+    });
+  </script>
+
+{% endblock javascripts %}

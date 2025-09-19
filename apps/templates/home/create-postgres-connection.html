@@ -1,0 +1,44 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+<h1 class="text-center">Connect to PostgreSQL Database</h1>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-6 offset-sm-3">
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="{{ form.db_name.id_for_label }}">Database Name</label>
+                    {{ form.db_name }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.username.id_for_label }}">Username</label>
+                    {{ form.username }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.password.id_for_label }}">Password</label>
+                    {{ form.password }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.host.id_for_label }}">Host</label>
+                    {{ form.host }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.port.id_for_label }}">Port</label>
+                    {{ form.port }}
+                </div>
+                <!-- Auth0 user id hidden input -->
+                {{ form.users_id }}
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Connect</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    document.querySelectorAll('input, textarea').forEach(e => {
+        e.classList.add('form-control');
+    })
+</script>
+{% endblock content %}

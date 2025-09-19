@@ -1,0 +1,40 @@
+version: "3.7"
+services:
+  web:
+    container_name: core_app
+    build: 
+      context: .
+      dockerfile: Dockerfile.prod
+    restart: always
+    env_file: core/env/prod/.env
+    environment:
+      - DJANGO_SETTINGS_MODULE=core.settings.production
+      - STRIPE_SECRET_KEY=sk_test_duuyOcc0Ja7Q92P7O776rm5O
+
+      - PYTHONPATH=/apps
+    ports:
+      - "5005:5005"
+    volumes:
+      - .:/apps
+      - ./static:/apps/static
+    networks:
+      - app-network
+
+  nginx:
+    container_name: core_nginx
+    build: nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - .:/apps
+      - ./static:/apps/static
+    depends_on:
+      - web
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

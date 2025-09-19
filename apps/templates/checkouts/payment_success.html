@@ -1,0 +1,22 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+    <script>
+        // transaction_id is taken from the query string parameter
+        // https://www.example.com/payment-success?transaction_id=1231
+        transaction_id = window.location.search.split('transaction_id=')[1];
+        gtag('event', 'conversion', {
+            'send_to': 'AW-11038462445/SM6zCLSsurwYEO2jxo8p',
+            'transaction_id': '{{ user_id }}'
+        });
+    </script>
+
+    <div class="container">
+        <div class="jumbotron text-center mt-5">
+            <h1 class="text-success">Payment Success</h1>
+            <p>Thank you! Get started by setting up a database connection.
+                <a href="{% url 'chat' %}">Go to App</a>.
+            </p>
+        </div>
+    </div>
+{% endblock content %}
